@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Path, HTTPException, status, Query
 from fastapi.responses import JSONResponse
 import json
-from schemas import Patient
+from schemas import Patient, EnumsModel, PatientUpdate
 
 app = FastAPI()
 
@@ -121,4 +121,56 @@ def create(patient:Patient):
     return JSONResponse(status_code=status.HTTP_201_CREATED, content= {"msg":"Data inserted successfully"})
 
 
+@app.patch("/update/{patient_id}")
+def update(
+    patient_id: str,
+    patient:PatientUpdate
+    ):
+    data = read()
+    if not patient_id in data.keys():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Patient id")
+    
+    updated_data = patient.model_dump(exclude_unset=True)
+    data[patient_id].update(updated_data)
 
+    save_data(data)
+
+    return {"updated_data":data[patient_id]}
+
+@app.delete("/delete/{patient_id}")
+def delete_patient(patient_id : str):
+    data = read()
+
+    if not patient_id in data.keys():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Patient id")
+    
+    deleted_data = data.pop(patient_id)
+    save_data(data)
+    return {"msg":f"Patient {patient_id} deleted successfully","deleted_data": deleted_data}
+
+
+@app.get("/filter/{gender}")        #selecting options path parameters
+def filter(gender:EnumsModel):
+    data = read()
+    patients = list(data.values())
+    patients_data = [p for p in patients if p["gender"].lower()==gender.value.lower()]
+    return {"patients":patients_data }
+
+
+
+
+@app.get("/pagination")
+def pagination(skip: int = 0, limit:int = 10):
+    data = read()
+    data_list = list(data.items())
+    # print(data_list)
+    show = []
+    # for i in range(limit):
+    show.append(data_list[skip:skip + limit])
+
+    return {
+        "total": len(data_list),
+        "skip":skip,
+        "limit":limit,
+        "data": show
+            }

@@ -1,0 +1,24 @@
+{
+    "P001": {
+        "name": "Harsh sahu",
+        "age": 25, 
+        "gender": "male", 
+        "contact": "6386214425", 
+        "address": "Rajajipuram, lucknow", 
+        "height_cm": 172.0, 
+        "weight_kg": 65.0, 
+        "medical_history": [], 
+        "bmi": 0.0
+    }, 
+    "P002": {
+        "name": "seema sahu", 
+        "age": 55, 
+        "gender": "female", 
+        "contact": "9125934215", 
+        "address": "Rajajipuram, lucknow", 
+        "height_cm": 155.0, 
+        "weight_kg": 60.0, 
+        "medical_history": ["Normal"], 
+        "bmi": 24.97
+    }
+}
